@@ -1,0 +1,24 @@
+'_id', 微博号
+'user', 用户号
+'retweeted_uid', 转发的来源用户号
+'retweeted_mid', 转发的来源微博号
+'text', 微博内容
+'timestamp', 时间戳
+'reposts_count', 转发数
+'bmiddle_pic', 配图
+'geo', ip地址
+'comments_count', 评论数
+'message_type' 微博种类。1代表原创，2代表评论，3代表转发，4代表私信
+
+
+
+************************************************************************
+'user', 用户号
+'retweeted_uid', 转发的来源用户号
+
+时间戳(是否可以限定小一点.数据量太多了)
+reposts_count: 可以累加,一个用户的所有微博的转发数
+bimiddle_pic: 是否有配图,还是纯文字?
+comments_count: 可以累加,一个用户的评论数量多少
+
+微博种类, 2\4不要???

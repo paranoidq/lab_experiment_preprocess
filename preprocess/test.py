@@ -45,18 +45,8 @@ logger.setLevel(logging.DEBUG)
 #
 # print(','.join((str(u) for u in network[2].keys())))
 
-import re
-
-pattern = re.compile(r'(\d+),(\d+)(,.+)*')
-
-text = '3607101537,20,藏地菌王之王|2,哈芙诺基赢美肌神器|2,欢乐开学季|2,一方茶水中秋茶月饼限时抢购|2,每日特价极速冲钻|2,大闹西游|2,中秋|2,茚象泉秋季护肤|2,99大聚惠|1,应用广场签到|1,91熊猫看书年会|2,转发疯抢云海人家高档茶具|2,2013湖北微博嘉年华|2,开心久久狂送钻石珍珠项链啦|2,9月15广州顶固家居工厂团购钜惠|1,曼都发型微信送好礼|1,茶|1,海外婚礼|2,视觉江苏|2,有奖转发|2'
-
-g = pattern.match(text).groups()[-1]
-print(g)
-p2 = re.compile(r'[^,]+\|\d+')
-s = p2.findall(g)
-
-print(s)
+d = {1:(4,2), 2:(2,3)}
+d = sorted(d.items(), key=lambda t: t[1][0], reverse=False)
 
 
 

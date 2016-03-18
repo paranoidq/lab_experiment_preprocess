@@ -11,7 +11,7 @@
 """
 
 import re
-from src import path_constants as constant
+from preprocess import path_constants as constant
 
 
 def load_tags(path):
@@ -41,6 +41,19 @@ def load_network(path):
                 network[user] = dict()
                 network[user][retweeted_uid] = strength
     return network
+
+
+def load_users(path):
+    users = set()
+    with open(path, 'r', encoding='utf-8') as fin:
+        for line in fin:
+            users.add(int(line))
+    return users
+
+
+if __name__ == '__main__':
+    users = load_users(constant.users_path)
+    print(len(users))
 
 
 

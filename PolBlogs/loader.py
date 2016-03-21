@@ -10,9 +10,6 @@
 @time: 16/3/17 20:34
 """
 
-stop_words_path = "/Users/paranoidq/316-data/polblogs/stopwords"
-stop_words_enhanced_path = "/Users/paranoidq/316-data/polblogs/stopwords_enhanced"
-
 
 def load_stop_words(path):
     stops = set()
@@ -40,9 +37,8 @@ def load_id2words(path):
     return words
 
 
-def load_uid2features():
+def load_uid2features(path):
     user_feats = dict()
-    path = '/Users/paranoidq/316-data/polblogs/features'
     with open(path, 'r', encoding='utf-8') as fin:
         for no, line in enumerate(fin):
             uid = no
@@ -52,27 +48,38 @@ def load_uid2features():
                 user_feats[uid].add(feat)
     return user_feats
 
+
 def load_edges(path):
-    edges = list()
+    edges = set()
     with open(path, 'r', encoding='utf-8') as fin:
         for line in fin:
             sp = line.strip('\n').split(',')
             u1 = int(sp[0])
             u2 = int(sp[1])
-            edges.append((u1, u2))
+            edges.add((u1, u2))
     return edges
 
 
-def load_trans():
-    path = '/Users/paranoidq/316-data/polblogs/trans'
-    trans_set = list()
+def load_trans(path):
+    trans_set = dict()
     with open(path, 'r', encoding='utf-8') as fin:
         for line in fin:
-            trans = list()
+            trans = set()
             sp = line.strip('\n').split(',')
-            trans.append((int(x) for x in sp))
+            trans.add((int(x) for x in sp))
             trans_set.append(trans)
     return trans_set
+
+
+def load_patterns(path):
+    pats = dict()
+    with open(path, 'r', encoding='utf-8') as fin:
+        for pat_id, line in enumerate(fin):
+            pats = line.strip('\n').split('|')[0].split(' ')
+            pats[pat_id] = set()
+            for item_id in (int(x) for x in pats):
+                pats[pat_id].add(item_id)
+    return pats
 
 
 

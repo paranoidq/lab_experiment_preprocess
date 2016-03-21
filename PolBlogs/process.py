@@ -7,60 +7,19 @@
 @license: Apache Licence 
 @contact: paranoid_qian@163.com
 @file: process.py
-@time: 16/3/17 14:24
+@time: 16/3/18 20:25
 """
-from PolBlogs import loader as loader
-from operator import itemgetter
 
-dir_path = "/Users/paranoidq/316-data/polblogs/"
+from PolBlogs import loader
+from PolBlogs import constant
 
-def process():
-
-    pass
-
-def process_words():
-    with open(dir_path+'words_src', 'r') as fin:
-        with open(dir_path+'words', 'w+') as fout:
-            for line in fin:
-                line = line.strip('\'\n').strip('\'')
-                fout.write(line + '\n')
-
-def process_edges():
-    with open(dir_path+'edges_src', 'r') as fin:
-        with open(dir_path+'edges', 'w+') as fout:
-            for _id, line in enumerate(fin):
-                sp = line.split(',')
-                for _iid, s in enumerate(sp):
-                    if s == '1':
-                        fout.write(str(_id) + ',' + str(_iid) + '\n')
-
-def process_features():
-
-    stops = loader.load_stop_words()
-    id2words = loader.load_id2words()
-    f_words = dict()
-
-    for _id, word in id2words.items():
-        if word not in stops:
-            f_words[_id] = word
-
-    src_path = dir_path + 'features_src'
-    dest_path = dir_path + 'features'
-    with open(dest_path, 'w+', encoding='utf-8') as fout:
-        with open(src_path, 'r', encoding='utf-8') as fin:
-            for uid, line in enumerate(fin):
-                sp = line.strip('\n').split(",")
-                l = list()
-                for featno, fit in enumerate(sp):
-                    if fit == "1" and featno in f_words: # 过滤stop words
-                        l.append(str(featno))
-                fout.write(','.join(l) + '\n')
+dir_path = constant.base
 
 
-def gen_word_pair():
+def gen_items():
     """
-    1. 过滤words
-    2. generate word pair
+    1. load 过滤过的item
+    2. generate item
     """
     stops = loader.load_stop_words()
     id2words = loader.load_id2words()
@@ -71,29 +30,18 @@ def gen_word_pair():
         if word not in stops:
             f_words[_id] = word
 
-    path = dir_path + 'pair_words'
-    # 一共四种可能性
+    path = dir_path + 'items'
+    # # 一共四种可能性
+    # with open(path, 'w+', encoding='utf-8') as fout:
+    #     for _id in f_words.keys():
+    #         fout.write(str(_id) + ':' + "0,0" + '\n')
+    #         fout.write(str(_id) + ':' + "0,1" + '\n')
+    #         fout.write(str(_id) + ':' + "1,0" + '\n')
+    #         fout.write(str(_id) + ':' + "1,1" + '\n')
+    # 考虑node的值相等作为item
     with open(path, 'w+', encoding='utf-8') as fout:
         for _id in f_words.keys():
-            fout.write(str(_id) + ':' + "0,0" + '\n')
-            fout.write(str(_id) + ':' + "0,1" + '\n')
-            fout.write(str(_id) + ':' + "1,0" + '\n')
-            fout.write(str(_id) + ':' + "1,1" + '\n')
-
-
-def gen_f_words():
-    stops = loader.load_stop_words()
-    id2words = loader.load_id2words()
-
-    f_words = dict()
-
-    for _id, word in id2words.items():
-        if word not in stops:
-            f_words[_id] = word
-    f_words = sorted(f_words.items(), key=itemgetter(0), reverse=False)
-    with open(dir_path+'words_filtered', 'w+', encoding='utf-8') as fout:
-        for _id, word in f_words:
-            fout.write(str(_id) + "," + word + '\n')
+            fout.write(str(_id) + '\n')
 
 
 def gen_trans():
@@ -127,24 +75,27 @@ def gen_pats():
     id2items = loader.load_id2pairword()
     id2words = loader.load_id2words()
 
+    pats_rep_path = '/Users/paranoidq/316-data/polblogs/patterns_repr'
     with open(pats_path, 'r', encoding='utf-8') as fin:
-        for line in fin:
-            sp = line.strip('\n').split('|')
-            support = sp[-1]
-
-
-
-
-
-
-if __name__ == '__main__':
-    # process_words()
-    # process_features()
-    # gen_f_words()
-    # gen_word_pair()
-    # gen_trans()
-    gen_pats()
-    pass
+        with open(pats_rep_path, 'w+', encoding='utf-8') as fout:
+            for line in fin:
+                sp = line.strip('\n').split('|')
+                support = sp[-1]
+                items = sp[0].split(' ')
+                buff = []
+                for item_id in (int(x) for x in items):
+                    item = id2items[item_id]
+                    sp = item.split(':')
+                    word = id2words[int(sp[0])]
+                    if sp[1] == '0,1':
+                        buff.append((word, '@'))
+                    elif sp[1] == '1,0':
+                        buff.append(('@', word))
+                    elif sp[1] == '1,1':
+                        buff.append((word, word))
+                for w1, w2 in buff:
+                    fout.write(w1 + ',' + w2 + '|')
+                fout.write(str(support) + '\n')
 
 
 

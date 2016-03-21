@@ -10,22 +10,32 @@
 @time: 16/3/17 20:34
 """
 
+stop_words_path = "/Users/paranoidq/316-data/polblogs/stopwords"
+stop_words_enhanced_path = "/Users/paranoidq/316-data/polblogs/stopwords_enhanced"
 
-def load_stop_words():
+
+def load_stop_words(path):
     stops = set()
-    path = "/Users/paranoidq/316-data/polblogs/stopwords"
     with open(path, 'r', encoding='utf-8') as fin:
         for line in fin:
-            stops.add(line.strip("\s\n"))
+            stops.add(line.strip("\n"))
+    return stops
+
+def load_enhanced_stops(path):
+    stops = set()
+    with open(path, 'r', encoding='utf-8') as fin:
+        for line in fin:
+            stops.add(line.strip("\n"))
     return stops
 
 
-def load_id2words():
+def load_id2words(path):
     words = dict()
-    path = '/Users/paranoidq/316-data/polblogs/words'
     with open(path, 'r', encoding='utf-8') as fin:
-        for no, line in enumerate(fin):
-            word = line.strip("\s\n")
+        for line in fin:
+            sp = line.strip("\n").split(',')
+            no = int(sp[0])
+            word = sp[1]
             words[no] = word
     return words
 
@@ -42,8 +52,7 @@ def load_uid2features():
                 user_feats[uid].add(feat)
     return user_feats
 
-def load_edges():
-    path = '/Users/paranoidq/316-data/polblogs/edges'
+def load_edges(path):
     edges = list()
     with open(path, 'r', encoding='utf-8') as fin:
         for line in fin:
@@ -52,24 +61,6 @@ def load_edges():
             u2 = int(sp[1])
             edges.append((u1, u2))
     return edges
-
-
-def load_pairword2id():
-    path = '/Users/paranoidq/316-data/polblogs/pair_words'
-    pairwords2id = dict()
-    with open(path, 'r', encoding='utf-8') as fin:
-        for no, line in enumerate(fin):
-            pairwords2id[line.strip('\n')] = no
-    return pairwords2id
-
-
-def load_id2pairword():
-    path = '/Users/paranoidq/316-data/polblogs/pair_words'
-    id2pairwords = dict()
-    with open(path, 'r', encoding='utf-8') as fin:
-        for no, line in enumerate(fin):
-            id2pairwords[no] = line.strip('\n')
-    return id2pairwords
 
 
 def load_trans():
@@ -82,4 +73,6 @@ def load_trans():
             trans.append((int(x) for x in sp))
             trans_set.append(trans)
     return trans_set
+
+
 
